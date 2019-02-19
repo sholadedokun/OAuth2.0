@@ -76,6 +76,8 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
+    
+
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
@@ -95,10 +97,16 @@ def gconnect():
 
     data = answer.json()
 
+    # Check to see if user is already in database
+    
+
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
-
+    user_id = getUserID(data['email'])
+    if user_id is None:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
